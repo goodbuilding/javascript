@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>自己封装ajax</title>
+</head>
+<body>
+
+</body>
+</html>
+<!--czbk-->
+<script>
+    function ajax(data){
+        //data={data:"",dataType:"xml/json",type:"get/post"，url:"",asyn:"true/false",success:function(){},failure:function(){}}
+
+        //data:{username:123,password:456}
+        //data = 'username=123&password=456';
+        //第一步：创建xhr对象
+        var xhr = null;
+        if(window.XMLHttpRequest){//标准的浏览器
+            xhr = new XMLHttpRequest();
+        }else{
+            xhr = new ActiveXObject('Microsoft.XMLHTTP');
+        }
+        //第二步：准备发送前的一些配置参数
+        var type = data.type == 'get'?'get':'post';
+        var url = '';
+        if(data.url){
+            url = data.url;
+            if(type == 'get'){
+//			前端处理缓存的办法：加上时间
+                url += "?" + data.data + "&_t="+new Date().getTime();
+            }
+        }
+        var flag = data.asyn == 'true'?'true':'false';
+        xhr.open(type,url,flag);
+
+        //第三步：执行发送的动作
+        if(type == 'get'){
+            xhr.send(null);
+        }else if(type == 'post'){
+            xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+            xhr.send(data.data);
+        }
+
+        //第四步：指定回调函数
+        xhr.onreadystatechange = function(){
+            if(this.readyState == 4){
+                if(this.status == 200){
+//				判断是不是function类型：
+                    if(typeof data.success == 'function'){
+                        var d = data.dataType == 'xml'?xhr.responseXML:xhr.responseText;
+                        data.success(d);
+                    }
+                }else{
+                    if(typeof data.failure == 'function'){
+                        data.failure();
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    //实例：
+    window.onload = function(){
+        //注册按钮单击事件
+        var btn = document.getElementById('btn');
+        btn.onclick = function(){
+            var param = {
+                url: '00data.php',
+                type:'get',
+                dataType:'json',
+                success:function(data){
+                    alert(data);
+                }
+            };
+            ajax(param);
+        }
+    }
+</script>
+
+
+<script>
+    //http://www.tuicool.com/articles/n26F3yb
+    //通过createXHR()函数创建一个XHR对象：
+    function createXHR() {
+        if (window.XMLHttpRequest) {	//IE7+、Firefox、Opera、Chrome 和Safari
+            return new XMLHttpRequest();
+        } else if (window.ActiveXObject) {   //IE6 及以下
+            var versions = ['MSXML2.XMLHttp', 'Microsoft.XMLHTTP'];
+            for (var i = 0, len = versions.length; i < len; i++) {
+                try {
+                    return new ActiveXObject(version[i]);
+                    break;
+                } catch (e) {
+                    //跳过
+                }
+            }
+        } else {
+            throw new Error('浏览器不支持XHR对象！');
+        }
+    }
+    //封装ajax，参数为一个对象
+    function ajax(obj) {
+        var xhr = createXHR();	//创建XHR对象
+        //通过使用JS随机字符串解决IE浏览器第二次默认获取缓存的问题
+        obj.url = obj.url + '?rand=' + Math.random();
+        obj.data = params(obj.data);  //通过params()将名值对转换成字符串
+        //若是GET请求，则将数据加到url后面
+        if (obj.method === 'get') {
+            obj.url += obj.url.indexOf('?') == -1 ? '?' + obj.data : '&' + obj.data;
+        }
+        if (obj.async === true) {   //true表示异步，false表示同步
+            //使用异步调用的时候，需要触发readystatechange 事件
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {   //判断对象的状态是否交互完成
+                    callback();		 //回调
+                }
+            };
+        }
+        //在使用XHR对象时，必须先调用open()方法，
+        //它接受三个参数：请求类型(get、post)、请求的URL和表示是否异步。
+        xhr.open(obj.method, obj.url, obj.async);
+        if (obj.method === 'post') {
+            //post方式需要自己设置http的请求头，来模仿表单提交。
+            //放在open方法之后，send方法之前。
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send(obj.data);		//post方式将数据放在send()方法里
+        } else {
+            xhr.send(null);		//get方式则填null
+        }
+        if (obj.async === false) {  //同步
+            callback();
+        }
+        function callback() {
+            if (xhr.status == 200) {  //判断http的交互是否成功，200表示成功
+                obj.success(xhr.responseText);			//回调传递参数
+            } else {
+                alert('获取数据错误！错误代号：' + xhr.status + '，错误信息：' + xhr.statusText);
+            }
+        }
+    }
+    //名值对转换为字符串
+    function params(data) {
+        var arr = [];
+        for (var i in data) {
+            //特殊字符传参产生的问题可以使用encodeURIComponent()进行编码处理
+            arr.push(encodeURIComponent(i) + '=' + encodeURIComponent(data[i]));
+        }
+        return arr.join('&');
+    }
+    //然后，比如给某一个按钮加一个点击绑定事件来调用ajax方法：
+
+    ajax({
+        method: 'post',
+        url: 'demo.php',
+        data: {
+            'name': 'JR',
+            'age': 22
+        },
+        success: function (message) {
+            alert(message);
+        },
+        async: true
+    });
+</script>
+
+
+<script>
+    //    http://www.cnblogs.com/lsy0403/p/5932337.html
+    /**
+     * ITCAST WEB
+     * Created by lsy on 2016/5/24.
+     */
+    /*
+     * 1. 请求的类型                type    get post
+     * 2. 请求地址                  url
+     * 3. 是异步的还是同步的         async   false true
+     * 4. 请求内容的格式            contentType
+     * 5. 传输的数据                data    json对象
+     *
+     * 6.响应成功处理函数           success   function
+     * 7.响应失败的处理函数         error     function
+     *
+     * 这些都是动态参数  参数对象  options
+     * */
+
+    /*封装一个函数*/
+    window.$ = {};
+    /*申明一个ajax的方法*/
+    $.ajax = function (options) {
+
+        if (!options || typeof options != 'object') {
+            return false;
+        }
+
+        /*请求的类型*/
+        var type = options.type || 'get';
+        /*默认get*/
+        /*请求地址 */
+        var url = options.url || location.pathname;
+        /*当前的地址*/
+        /*是异步的还是同步的 */
+        var async = (options.async === false) ? false : true;
+        /*默认异步*/
+        /*请求内容的格式 */
+        var contentType = options.contentType || "text/html";
+
+        /*传输的数据 */
+        var data = options.data || {};
+        /*｛name:'',age:''｝*/
+        /*在提交的时候需要转成 name=xjj 这种格式*/
+
+        var dataStr = ''
+        /*数据字符串*/
+
+        for (var key in data) {
+            dataStr += key + '=' + data[key] + '&';
+        }
+
+        dataStr = dataStr && dataStr.slice(0, -1);
+
+        /*ajax 编程*/
+        var xhr = new XMLHttpRequest();
+
+        /*请求行*/
+        /*(type=='get'?url+'?'+dataStr:url)判断当前的请求类型*/
+        xhr.open(type, (type == 'get' ? url + '?' + dataStr : url), async);
+
+        /*请求头*/
+        if (type == 'post') {
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        }
+
+        /*请求主体*/
+        /*需要判断请求类型*/
+        xhr.send(type == 'get' ? null : dataStr);
+
+        /*监听响应状态的改变  响应状态*/
+        xhr.onreadystatechange = function () {
+            /*请求响应完成并且成功*/
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                /*success*/
+                var data = '';
+                var contentType = xhr.getResponseHeader('Content-Type');
+                /*如果我们服务器返回的是xml*/
+                if (contentType.indexOf('xml') > -1) {
+                    data = xhr.responseXML;
+                }
+                /*如果我们的服务器返回的是json字符串*/
+                else if (contentType.indexOf('json') > -1) {
+                    /*转化json对象*/
+                    data = JSON.parse(xhr.responseText);
+                }
+                /*否则的话他就是字符串*/
+                else {
+                    data = xhr.responseText;
+                }
+
+                /*回调 成功处理函数*/
+
+                options.success && options.success(data);
+            }
+            /*计时请求xhr.status不成功  他也需要的响应完成才认作是一个错误的请求*/
+            else if (xhr.readyState == 4) {
+                /*error*/
+                options.error && options.error('you request fail !');
+
+            }
+
+        }
+    }
+    $.post = function (options) {
+        options.type = 'post';
+        $.ajax(options);
+    }
+    $.get = function (options) {
+        options.type = 'get';
+        $.ajax(options);
+    }
+</script>
+
+
+<script>
+    //http://www.cnblogs.com/a757956132/p/5603176.html
+    //jquery框架的ajax方法固然好用，但是假如某天我们的项目不能引入jquery或项目需求很简单，没有很多交互功能，只需要ajax，这时引入jquery库会造成资源浪费，也会显得页面臃肿。这时我们就需要用原生JS写一个ajax函数了。
+
+    /* 封装ajax函数
+     2  * @param {string}opt.type http连接的方式，包括POST和GET两种方式
+     3  * @param {string}opt.url 发送请求的url
+     4  * @param {boolean}opt.async 是否为异步请求，true为异步的，false为同步的
+     5  * @param {object}opt.data 发送的参数，格式为对象类型
+     6  * @param {function}opt.success ajax发送并接收成功调用的回调函数
+     7  */
+    function ajax(opt) {
+        opt = opt || {};
+        opt.method = opt.method.toUpperCase() || 'POST';
+        opt.url = opt.url || '';
+        opt.async = opt.async || true;
+        opt.data = opt.data || null;
+        opt.success = opt.success || function () {
+                };
+        var xmlHttp = null;
+        if (XMLHttpRequest) {
+            xmlHttp = new XMLHttpRequest();
+        }
+        else {
+            xmlHttp = new ActiveXObject('Microsoft.XMLHTTP');
+        }
+        var params = [];
+        for (var key in opt.data) {
+            params.push(key + '=' + opt.data[key]);
+        }
+        var postData = params.join('&');
+        if (opt.method.toUpperCase() === 'POST') {
+            xmlHttp.open(opt.method, opt.url, opt.async);
+            xmlHttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
+            xmlHttp.send(postData);
+        }
+        else if (opt.method.toUpperCase() === 'GET') {
+            xmlHttp.open(opt.method, opt.url + '?' + postData, opt.async);
+            xmlHttp.send(null);
+        }
+        xmlHttp.onreadystatechange = function () {
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                opt.success(xmlHttp.responseText);
+            }
+        };
+    }
+
+    //    演示：
+    ajax({
+        method: 'POST',
+        url: 'test.php',
+        data: {
+            name1: 'value1',
+            name2: 'value2'
+        },
+        success: function (response) {
+            console.log(response);
+        }
+    });
+</script>
