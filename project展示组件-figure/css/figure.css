@@ -1,0 +1,147 @@
+/*text font*/
+body{
+    font: 16px 'microsoft yahei';
+}
+
+
+/*正式内容*/
+figure {
+    position: relative;
+    float: left;
+    overflow: hidden;
+    margin: 10px 1%;
+    max-width: 100%;
+    max-height: 100%;
+    /*控制整体宽度百分比：*/
+    width: 48%;
+    /*忘记放图片时显示的颜色：同时因为figure img 设置了透明度可以显示出部分figure底色*/
+    background: #3085a3;
+    text-align: center;
+    cursor: pointer;
+}
+
+figure img {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    /*figure img 设置了透明度可以显示出部分figure底色：*/
+    opacity: 0.8;
+}
+
+figure figcaption {
+    /*padding: 2em;*/
+    color: #fff;
+    font-size: 1.25em;
+    /*backface-visibility 属性定义当元素不面向屏幕时是否可见：*/
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+figure figcaption,
+figure figcaption > a {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+figure figcaption > a {
+    z-index: 1000;
+    /*a标签的内容是注释不要让人看见*/
+    text-indent: 200%;
+    /*white-space 属性设置如何处理元素内的空白，nowrap	文本不会换行，文本会在在同一行上继续，直到遇到 <br> 标签为止。*/
+    white-space: nowrap;
+    font-size: 0;
+    opacity: 0;
+}
+
+figure h2,
+figure h3,
+figure h4{
+    /*word-spacing 属性增加或减少单词间的空白（即字间隔）*/
+    word-spacing: -0.15em;
+    font-weight: 300;
+    /*text-transform 属性控制文本的大小写。uppercase	定义仅有大写字母。word-spacing对中文无效*/
+    text-transform: uppercase;
+}
+
+figure h2,
+figure h3,
+figure h4,
+figure p {
+    margin: 0;
+}
+
+figure p {
+    /*letter-spacing 属性增加或减少字符间的空白（字符间距）*/
+    letter-spacing: 1px;
+    font-size: 68.5%;
+}
+
+figure.cross-image figcaption::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: -webkit-linear-gradient(top, rgba(72, 76, 97, 0) 0%, rgba(72, 76, 97, 0.8) 75%);
+    background: linear-gradient(to bottom, rgba(72, 76, 97, 0) 0%, rgba(72, 76, 97, 0.8) 75%);
+    content: '';
+    opacity: 0;
+    -webkit-transform: translate3d(0, 50%, 0);
+    transform: translate3d(0, 50%, 0);
+}
+
+figure.cross-image h2,
+figure.cross-image h3,
+figure.cross-image h4{
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    /*color: #fff;*/
+    color: rgba(255,255,255,.5);
+    -webkit-transition: -webkit-transform 0.35s, color 0.35s;
+    transition: transform 0.35s, color 0.35s;
+    -webkit-transform: translate3d(0, -50%, 0);
+    transform: translate3d(0, -50%, 0);
+}
+
+figure.cross-image figcaption::before,
+figure.cross-image p {
+    -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+    transition: opacity 0.35s, transform 0.35s;
+}
+
+figure.cross-image p {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    /*padding: 2em;*/
+    padding-bottom: 2em;
+    width: 100%;
+    opacity: 0;
+    -webkit-transform: translate3d(0, 10px, 0);
+    transform: translate3d(0, 10px, 0);
+}
+
+/*hover后的标题：*/
+figure.cross-image:hover h2,
+figure.cross-image:hover h3,
+figure.cross-image:hover h4{
+    /*hover后的颜色*/
+    color: #fff;
+    /*-webkit-transform: translate3d(0, -50%, 0) translate3d(0, -40px, 0);*/
+    /*transform: translate3d(0, -50%, 0) translate3d(0, -40px, 0);*/
+    -webkit-transform: translate3d(0, -50%, 0) translate3d(0, -200%, 0);
+    transform: translate3d(0, -50%, 0) translate3d(0, -200%, 0);
+}
+
+figure.cross-image:hover figcaption::before,
+figure.cross-image:hover p {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
