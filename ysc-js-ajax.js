@@ -9,6 +9,8 @@
 //{function}opt.success ajax 发送并接收成功调用的回调函数
 //{function}opt.error (可选）ajax发送并接收成功调用的回调函数
 
+//17.3.9: !注意我这个封装函数中的方法是用opt.method而不是opt.type来表示
+
 function ajax(opt) {
     var xhr = null;
     var method = opt.method.toUpperCase() || 'POST';

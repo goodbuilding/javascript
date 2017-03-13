@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>潮哥arttemplate练习例子模板</title>
+    <script src="template.js"></script>
+    <script id="test" type="text/html">
+        <h1>{{title}}</h1>
+        <h2>{{pm25.area[1]}}</h2>
+        <h3>啦啦啦：{{retData.title}}</h3>
+        <ul>
+            {{each list as value i}}
+            <li>索引 {{i + 1}} ：{{value}}</li>
+            {{/each}}
+            {{each weather as value i}}
+            <li>日期 {{i + 1}} ：{{value.date}}</li>
+            {{/each}}
+            {{each weather as value i}}
+            <li>白天天气 {{i + 1}} ：{{value.info.day[1]}}</li>
+            {{/each}}
+        </ul>
+
+        {{each weather as value i}}
+        <ul>
+            <li>{{i + 1}}日期 ：{{value.date}}</li>
+            <li>{{i + 1}}白天温度 ：{{value.info.day[2]}}度</li>
+        </ul>
+        {{/each}}
+
+        {{each retData.weather as value i}}
+        <ul>
+            <li>日期 ：{{value.date}}</li>
+            <li>白天天气 ：{{value.info.day[1]}}</li>
+            <li>夜间风向 ：{{value.info.day[3]}}</li>
+        </ul>
+        {{/each}}
+    </script>
+    <script>
+        window.onload = function () {
+            var data = {
+                title: '标签',
+                list: ['文艺', '博客', '摄影'],
+
+                "weather": [{
+                    "date": "2017-03-12",
+                    "info": {
+                        "dawn": ["0", "\u6674", "2", "\u5317\u98ce", "\u5fae\u98ce"],
+                        "day": ["0", "\u6674", "13", "\u5317\u98ce", "3-4 \u7ea7"],
+                        "night": ["0", "\u6674", "1", "\u5317\u98ce", "\u5fae\u98ce"]
+                    }
+                }, {
+                    "date": "2017-03-13",
+                    "info": {
+                        "dawn": ["0", "\u6674", "1", "\u5317\u98ce", "\u5fae\u98ce"],
+                        "day": ["0", "\u6674", "14", "\u5357\u98ce", "\u5fae\u98ce"],
+                        "night": ["0", "\u6674", "2", "\u5317\u98ce", "\u5fae\u98ce"]
+                    }
+                }
+                ],
+                "pm25": {
+                    "area": ["\u5317\u4eac", "101010100"],
+                    "pm25": [27, "2017031213"]
+                },
+
+
+                "retData": {
+                    title: 'retData标签',
+                    list: ['aa', 'bb', 'cc'],
+
+                    "weather": [{
+                        "date": "2017-03-12",
+                        "info": {
+                            "dawn": ["0", "\u6674", "2", "\u5317\u98ce", "\u5fae\u98ce"],
+                            "day": ["0", "\u6674", "13", "\u5317\u98ce", "3-4 \u7ea7"],
+                            "night": ["0", "\u6674", "1", "\u5317\u98ce", "\u5fae\u98ce"]
+                        }
+                    }, {
+                        "date": "2017-03-13",
+                        "info": {
+                            "dawn": ["0", "\u6674", "1", "\u5317\u98ce", "\u5fae\u98ce"],
+                            "day": ["0", "\u6674", "14", "\u5357\u98ce", "\u5fae\u98ce"],
+                            "night": ["0", "\u6674", "2", "\u5317\u98ce", "\u5fae\u98ce"]
+                        }
+                    }
+                    ]
+                }
+
+            };
+            var html = template('test', data);
+            document.getElementById('info').innerHTML = html;
+        }
+    </script>
+</head>
+<body>
+<div id="info"></div>
+</body>
+</html>
